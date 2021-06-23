@@ -8,21 +8,42 @@ import {
     FlatList,
     Text
 } from 'react-native';
-import {getFilmsFromApiWithSearchedText} from "../API/TMD"
+import { getFilmsFromApiWithSearchedText } from "../API/TMD";
+import FilmItem from './FilmItem';
+// import data from '../data/dataFilms';
+
 
 export default class Search extends Component {
 
+    constructor(props) {
+        super(props)
+        this.state = { fimls: [] }
+    }
 
     _loadFilms() {
-        getFilmsFromApiWithSearchedText("star").then(data => console.log(data));
+        getFilmsFromApiWithSearchedText("star").
+            then(data => {
+                //this.setState({ films: data.results })
+                this.state.fimls= data.results;
+               
+            
+                 this.forceUpdate();
+                // console.log( this.films);
+            })
     }
 
     render() {
+        const films = this.state.fimls;
+        console.log(this.state.fimls);
         return (
             <View style={styles.main_container}>
                 <TextInput style={styles.textinput} placeholder="Titre du film" />
-                <Button title="Recherche" onPress={() => { }} />
-
+                <Button title="Recherche" onPress={() => { this._loadFilms() }} />
+                <FlatList
+                    data={films}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={(item) => <FilmItem film={item} />}
+                />
             </View>
         )
     }
