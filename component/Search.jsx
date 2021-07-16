@@ -35,6 +35,7 @@ export default class Search extends Component {
             let isDispo = this.state.films.length === 0 ? false : true;
             this.setState({ isLoading: isDispo });
             // this.state.isLoading = isDispo;
+
             getFilmsFromApiWithSearchedText(this.state.searchedText, this.page + 1).
                 then(data => {
                     this.page = data.page,
@@ -82,7 +83,7 @@ export default class Search extends Component {
                     onChangeText={(text) => { this._searchTextInputChanged(text) }}
                     onSubmitEditing={() => { this._searchFilms() }}
                 />
-                <Button title="Recherche" onPress={() => { this._searchFilms() }} />
+                <Button style={styles.btnrecherche} title="Recherche" onPress={() => { this._searchFilms() }} />
                 <FlatList
                     data={films}
                     onEndReachedThreshold={0.5}
@@ -109,15 +110,28 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginLeft: 5,
         marginRight: 5,
+        marginBottom: 10,
         borderWidth: 1,
         borderColor: '#000',
         paddingLeft: 5,
+        paddingTop: 20,
+        fontSize: "1.5rem",
+        borderRadius: 15,
+        outlineColor: "initial",
+        outlineStyle: "none",
+        outlineWidth: "initial",
+
+    }
+    , btnrecherche: {
+        marginLeft: 5,
+        marginRight: 5,
     },
     loading_container: {
+        // backgroundColor: "#fff",
         position: 'absolute',
         left: 0,
         right: 0,
-        top: 100,
+        top: 0,
         bottom: 0,
         alignItems: 'center',
         justifyContent: 'center'
