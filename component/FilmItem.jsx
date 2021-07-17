@@ -6,12 +6,13 @@ export default class FilmItem extends Component {
 
     render() {
         const film = this.props.film.item;
-//
+        //
+        console.log(film)
         return (
             <View style={styles.main_container}>
                 <Image
                     style={styles.image}
-                    source={{ uri:getImageFromApi(film.poster_path)}}
+                    source={{ uri: getImageFromApi(film.poster_path) }}
                 />
                 <View style={styles.content_container}>
                     <View style={styles.header_container}>
@@ -55,13 +56,13 @@ const styles = StyleSheet.create({
     },
     title_text: {
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: "1rem",
         marginRight: 10,
 
     },
     vote_text: {
         fontWeight: 'bold',
-        fontSize: 26,
+        fontSize: "1.3rem",
         color: '#666666'
     },
     // description_container: {

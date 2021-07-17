@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+
+import { getFilmsFromApiWithSearchedText } from "../API/TMD";
 import {
     StyleSheet,
     View,
@@ -9,13 +11,8 @@ import {
     Text,
     ActivityIndicator
 } from 'react-native';
-import {
-    getFilmsFromApiWithSearchedText,
-
-} from "../API/TMD";
-import FilmItem from './FilmItem';
-// import data from '../data/dataFilms';
-
+//import dataFilms from '../data/dataFilms';
+import FilmItem from './FilmItem'
 
 export default class Search extends Component {
 
@@ -31,71 +28,41 @@ export default class Search extends Component {
     }
 
     _loadFilms() {
-        if (this.state.searchedText.length > 0) {
-            let isDispo = this.state.films.length === 0 ? false : true;
-            this.setState({ isLoading: isDispo });
-            // this.state.isLoading = isDispo;
-
-            getFilmsFromApiWithSearchedText(this.state.searchedText, this.page + 1).
-                then(data => {
-                    this.page = data.page,
-                        this.totalPages = data.total_pages,
-                        this.setState({
-                            films: [...this.state.films, ...data.results],
-                            isLoading: true
-                        })
+        let searchedText = this.state.searchedText;
+        console.log(searchedText)
+        if (searchedText.length > 0) {
+            // Seulement si le texte recherché n'est pas vide
+            getFilmsFromApiWithSearchedText(searchedText)
+                .then(data => {
+                    console.log(data);
+                    this.setState({ films: data.results })
                 })
 
         }
-
     }
     _searchTextInputChanged(text) {
+
         this.setState({ searchedText: text })
-        //this._loadFilms();
-    }
-    _searchFilms() {
-        // Ici on va remettre à zéro les films de notre state
-        this.page = 0
-        this.totalPages = 0
-        this.setState({
-            films: []
-        }, () => {
-            console.log("Page : " + this.page + " / TotalPages : " + this.totalPages + " / Nombre de films : " + this.state.films.length)
-            this._loadFilms()
-        })
-
     }
 
-    _displayLoading() {
-        if (!this.state.isLoading) {
-            return (
-                <View style={styles.loading_container}>
-                    <ActivityIndicator size='large' />
-                </View>
-            )
-        } else return null
-    }
+
     render() {
         const films = this.state.films;
+
         return (
             <View style={styles.main_container}>
-                <TextInput style={styles.textinput} placeholder="Titre du film"
-                    onChangeText={(text) => { this._searchTextInputChanged(text) }}
-                    onSubmitEditing={() => { this._searchFilms() }}
+                <TextInput
+                    style={styles.textinput}
+                    placeholder="Titre du film"
+                    onChangeText={(text) => this._searchTextInputChanged(text)}
                 />
-                <Button style={styles.btnrecherche} title="Recherche" onPress={() => { this._searchFilms() }} />
+                <Button title="Recherche"
+                    onPress={() => this._loadFilms()} />
                 <FlatList
                     data={films}
-                    onEndReachedThreshold={0.5}
-                    onEndReached={() => {
-                        if (this.page > this.totalPages) {
-                            this._loadFilms();
-                        }
-                    }}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={(item) => <FilmItem film={item} />}
+                    keyExtractor={(item) => (item.id.toString())}
+                    renderItem={(item) => (<FilmItem film={item} />)}
                 />
-                {this._displayLoading()}
             </View>
         )
     }
@@ -121,10 +88,12 @@ const styles = StyleSheet.create({
         outlineStyle: "none",
         outlineWidth: "initial",
 
-    }
-    , btnrecherche: {
+    },
+    btnrecherche: {
         marginLeft: 5,
         marginRight: 5,
+        with: 50,
+        height: 50
     },
     loading_container: {
         // backgroundColor: "#fff",

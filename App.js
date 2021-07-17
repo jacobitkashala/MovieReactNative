@@ -9,13 +9,10 @@ import Search from './component/Search';
 
 // const Stack = createNativeStackNavigator();
 // const stack = createStackNavigator()
-
-
 export default function App() {
+  
   return (
     <Search />
-
-
   )
 }
 
