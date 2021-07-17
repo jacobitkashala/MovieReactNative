@@ -8,7 +8,6 @@ import {
     Button,
     TextInput,
     FlatList,
-    Text,
     ActivityIndicator
 } from 'react-native';
 //import dataFilms from '../data/dataFilms';
@@ -29,14 +28,18 @@ export default class Search extends Component {
 
     _loadFilms() {
         let searchedText = this.state.searchedText;
+        let page = this.page + 1;
         if (searchedText.length > 0) {
-            // Seulement si le texte recherché n'est pas vide
+            let filmsCurrent = this.state.films;
+
             this.setState({ isLoading: true })
-            getFilmsFromApiWithSearchedText(searchedText)
+
+            getFilmsFromApiWithSearchedText(searchedText, page)
                 .then(data => {
-                    console.log(data);
+                    this.page = data.page;
+                    this.totalPages = data.total_pages;
                     this.setState({
-                        films: data.results,
+                        films: [...filmsCurrent, ...data.results],
                         isLoading: false
                     })
                 })
@@ -59,20 +62,38 @@ export default class Search extends Component {
         }
     }
 
+    _searchFilms() {
+        // Ici on va remettre à zéro les films de notre state
+        this.page = 0;
+        this.totalPages = 0;
+        this.setState({
+            films: []
+        });
+        this._loadFilms();
+    }
+
     render() {
-        const films = this.state.films;
-        console.log(this.state.isLoading)
+        const films = this.state.films.reverse();
         return (
             <View style={styles.main_container}>
                 <TextInput
                     style={styles.textinput}
                     placeholder="Titre du film"
                     onChangeText={(text) => this._searchTextInputChanged(text)}
-                    onSubmitEditing={() => this._loadFilms()}
+                    onSubmitEditing={() => this._searchFilms()}
                 />
                 <Button title="Recherche"
-                    onPress={() => this._loadFilms()} />
+                    onPress={() => this._searchFilms()} />
                 <FlatList
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => {
+                        console.log("ENREa")
+                        if (this.page < this.totalPages) {
+                            //this._loadFilms();
+                            console.log(this.page, this.totalPages)
+
+                        }
+                    }}
                     data={films}
                     keyExtractor={(item) => (item.id.toString())}
                     renderItem={(item) => (<FilmItem film={item} />)}
@@ -111,13 +132,13 @@ const styles = StyleSheet.create({
         height: 50
     },
     loading_container: {
-        // backgroundColor: "#fff",
+        backgroundColor: "#fff",
         position: 'absolute',
         left: 0,
         right: 0,
-        top: 100,
+        top: 0,
         bottom: 0,
-        // alignItems: 'center',
-        // justifyContent: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });
