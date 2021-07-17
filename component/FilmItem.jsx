@@ -7,7 +7,6 @@ export default class FilmItem extends Component {
     render() {
         const film = this.props.film.item;
         //
-        console.log(film)
         return (
             <View style={styles.main_container}>
                 <Image

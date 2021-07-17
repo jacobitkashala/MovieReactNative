@@ -23,38 +23,52 @@ export default class Search extends Component {
         this.state = {
             films: [],
             searchedText: "",
-            isLoading: false
+            isLoading: false,
         }
     }
 
     _loadFilms() {
         let searchedText = this.state.searchedText;
-        console.log(searchedText)
         if (searchedText.length > 0) {
             // Seulement si le texte recherché n'est pas vide
+            this.setState({ isLoading: true })
             getFilmsFromApiWithSearchedText(searchedText)
                 .then(data => {
                     console.log(data);
-                    this.setState({ films: data.results })
+                    this.setState({
+                        films: data.results,
+                        isLoading: false
+                    })
                 })
 
         }
     }
+
     _searchTextInputChanged(text) {
 
         this.setState({ searchedText: text })
     }
 
+    _displayLoading() {
+        if (this.state.isLoading) {
+            return (
+                <View style={styles.loading_container}>
+                    <ActivityIndicator size='x-large' />
+                </View>
+            )
+        }
+    }
 
     render() {
         const films = this.state.films;
-
+        console.log(this.state.isLoading)
         return (
             <View style={styles.main_container}>
                 <TextInput
                     style={styles.textinput}
                     placeholder="Titre du film"
                     onChangeText={(text) => this._searchTextInputChanged(text)}
+                    onSubmitEditing={() => this._loadFilms()}
                 />
                 <Button title="Recherche"
                     onPress={() => this._loadFilms()} />
@@ -63,6 +77,7 @@ export default class Search extends Component {
                     keyExtractor={(item) => (item.id.toString())}
                     renderItem={(item) => (<FilmItem film={item} />)}
                 />
+                {this._displayLoading()}
             </View>
         )
     }
@@ -100,9 +115,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        top: 0,
+        top: 100,
         bottom: 0,
-        alignItems: 'center',
-        justifyContent: 'center'
+        // alignItems: 'center',
+        // justifyContent: 'center'
     }
 });
