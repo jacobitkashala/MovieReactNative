@@ -38,15 +38,22 @@ const Stack = createStackNavigator();
 //     </NavigationContainer>
 //   )
 // }
+import { Provider } from 'react-redux';
+import store from './Redux/store/configureStore';
+
 export default function app() {
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Accueil" component={Home} />
-        <Stack.Screen name="Detail" component={Detail} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Accueil" component={Home} />
+          <Stack.Screen name="Detail" component={Detail} />
+        </Stack.Navigator>
+      </NavigationContainer>
+
+    </Provider>
   )
 }
 
